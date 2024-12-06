@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-scripts
+data:
+  shiro.ini: |
+    {{ .Files.Get "files/shiro.ini" | indent 4 }}
+  load.sh: |
+    {{ .Files.Get "files/load.sh" | indent 4 }}
+  docker-entrypoint.sh: |
+    {{ .Files.Get "files/docker-entrypoint.sh" | indent 4 }}
+binaryData:
+  tdbloader2: {{ .Files.Get "files/tdbloader2" | b64enc }}

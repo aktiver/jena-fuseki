@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-load-data
+spec:
+  template:
+    spec:
+      containers:
+        - name: loader
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          command: ["/bin/bash", "/fuseki-scripts/load.sh"]
+          args: ["dataset1", "dataset2"]
+          volumeMounts:
+            - name: fuseki-scripts
+              mountPath: /fuseki-scripts
+      volumes:
+        - name: fuseki-scripts
+          configMap:
+            name: {{ .Release.Name }}-scripts
+      restartPolicy: OnFailure

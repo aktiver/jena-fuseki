@@ -1,0 +1,37 @@
+replicaCount: 2
+
+image:
+  repository: stain/jena-fuseki
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 3030
+
+resources:
+  requests:
+    memory: "16Gi"
+    cpu: "4"
+  limits:
+    memory: "256Gi"
+    cpu: "512"
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 16
+  targetCPUUtilizationPercentage: 80
+
+persistence:
+  enabled: true
+  size: 500Gi
+
+admin:
+  password: admin
+
+datasets:
+  - name: dataset1
+  - name: dataset2
+
+javaOpts: "-Xms16G -Xmx256G -XX:ParallelGCThreads=64"

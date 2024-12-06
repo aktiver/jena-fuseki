@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-fuseki
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: fuseki
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 3030
+          env:
+            - name: ADMIN_PASSWORD
+              value: {{ .Values.admin.password }}
+            - name: JVM_ARGS
+              value: {{ .Values.javaOpts }}
+            - name: TDB
+              value: "2"
+          volumeMounts:
+            - mountPath: /fuseki
+              name: fuseki-data
+            - mountPath: /fuseki-scripts
+              name: fuseki-scripts
+      volumes:
+        - name: fuseki-data
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-pvc
+        - name: fuseki-scripts
+          configMap:
+            name: {{ .Release.Name }}-scripts
